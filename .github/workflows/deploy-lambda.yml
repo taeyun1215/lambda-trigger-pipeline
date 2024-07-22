@@ -13,10 +13,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
-          java-version: '11'
+          java-version: '17'
 
       - name: Build with Gradle
         run: ./gradlew build
@@ -25,27 +25,27 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: 'us-east-1' # Change this to your region
+          AWS_REGION: 'ap-northeast-2'
         run: |
-          aws s3 cp build/libs/your-app.jar s3://your-s3-bucket-name/your-app.jar
+          aws s3 cp build/libs/your-app.jar s3://spring-aws-lambda/your-app.jar
 
       - name: Check if Lambda Exists
         id: check_lambda
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: 'us-east-1' # Change this to your region
+          AWS_REGION: 'ap-northeast-2'
         run: |
-          aws lambda get-function --function-name your-lambda-function-name || echo "Function does not exist"
+          aws lambda get-function --function-name user || echo "Function does not exist"
 
       - name: Create or Update Lambda Function
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: 'us-east-1' # Change this to your region
+          AWS_REGION: 'ap-northeast-2'
         run: |
-          if aws lambda get-function --function-name your-lambda-function-name; then
-            aws lambda update-function-code --function-name your-lambda-function-name --s3-bucket your-s3-bucket-name --s3-key your-app.jar;
+          if aws lambda get-function --function-name user; then
+            aws lambda update-function-code --function-name user --s3-bucket spring-aws-lambda --s3-key your-app.jar;
           else
-            aws lambda create-function --function-name your-lambda-function-name --runtime java11 --role arn:aws:iam::123456789012:role/your-lambda-role --handler com.example.MyHandler::handleRequest --code S3Bucket=your-s3-bucket-name,S3Key=your-app.jar --description "My Java Lambda function" --timeout 15 --memory-size 512;
+            aws lambda create-function --function-name user --runtime java11 --role arn:aws:iam::905418281075:user/taeyun --handler com.example.demo.handler.StreamLambdaHandler::handleRequest --code S3Bucket=spring-aws-lambda,S3Key=your-app.jar --description "My Java Lambda function" --timeout 15 --memory-size 512;
           fi
