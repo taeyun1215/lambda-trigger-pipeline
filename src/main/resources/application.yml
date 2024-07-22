@@ -1,10 +1,10 @@
 spring:
   datasource:
-    url: jdbc:mariadb://spring-aws-lambda.cjq0ciekk2zb.ap-northeast-2.rds.amazonaws.com:3306/spring_aws_lambda
-    username: root
-    password: taeyun1215
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true

@@ -22,9 +22,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-      - name: List build/libs directory contents
-        run: ls -al build/libs
-
       - name: Upload to S3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -49,7 +46,7 @@ jobs:
           AWS_REGION: 'ap-northeast-2'
         run: |
           if aws lambda get-function --function-name user; then
-            aws lambda update-function-code --function-name user --s3-bucket spring-aws-lambda --s3-key your-app.jar;
+            aws lambda update-function-code --function-name user --s3-bucket spring-aws-lambda --s3-key demo-0.0.1-SNAPSHOT.jar;
           else
-            aws lambda create-function --function-name user --runtime java11 --role arn:aws:iam::905418281075:user/taeyun --handler com.example.demo.handler.StreamLambdaHandler::handleRequest --code S3Bucket=spring-aws-lambda,S3Key=your-app.jar --description "My Java Lambda function" --timeout 15 --memory-size 512;
+            aws lambda create-function --function-name user --runtime java11 --role arn:aws:iam::905418281075:role/taeyun --handler com.example.demo.handler.StreamLambdaHandler::handleRequest --code S3Bucket=spring-aws-lambda,S3Key=demo-0.0.1-SNAPSHOT.jar --description "My Java Lambda function" --timeout 15 --memory-size 512;
           fi
