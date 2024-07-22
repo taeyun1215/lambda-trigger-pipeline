@@ -28,7 +28,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: 'ap-northeast-2'
         run: |
-          aws s3 cp build/libs/your-app.jar s3://spring-aws-lambda/your-app.jar
+          aws s3 cp build/libs/demo-0.0.1-SNAPSHOT.jar s3://spring-aws-lambda/demo-0.0.1-SNAPSHOT.jar
 
       - name: Check if Lambda Exists
         id: check_lambda
