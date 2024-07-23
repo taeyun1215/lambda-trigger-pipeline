@@ -1,4 +1,4 @@
-name: Deploy Lambda Function and API Gateway
+name: Deploy Lambda Function
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,13 +22,34 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-      - name: Upload JAR to S3
+      - name: Upload to S3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: 'ap-northeast-2'
         run: |
           aws s3 cp build/libs/demo-0.0.1-SNAPSHOT.jar s3://spring-aws-lambda/demo-0.0.1-SNAPSHOT.jar
+
+      - name: Check if Lambda Exists
+        id: check_lambda
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'ap-northeast-2'
+        run: |
+          aws lambda get-function --function-name user || echo "Function does not exist"
+
+      - name: Create or Update Lambda Function
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'ap-northeast-2'
+        run: |
+          if aws lambda get-function --function-name user; then
+            aws lambda update-function-code --function-name user --s3-bucket spring-aws-lambda --s3-key demo-0.0.1-SNAPSHOT.jar;
+          else
+            aws lambda create-function --function-name user --runtime java17 --role arn:aws:iam::905418281075:role/taeyun --handler com.example.demo.handler.StreamLambdaHandler::handleRequest --code S3Bucket=spring-aws-lambda,S3Key=demo-0.0.1-SNAPSHOT.jar --description "My Java Lambda function" --timeout 15 --memory-size 512;
+          fi
 
       - name: Start Spring Boot and Generate OpenAPI Spec
         env:
@@ -49,11 +70,22 @@ jobs:
         run: |
           aws s3 cp openapi.json s3://spring-aws-lambda/openapi.json
 
-      - name: Create or Update API Gateway and Integrate with Lambda
+      - name: Encode OpenAPI Spec
+        run: |
+          base64 openapi.json > openapi_base64.json
+
+      - name: Create or Update API Gateway
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: 'ap-northeast-2'
         run: |
-          chmod +x deploy.sh
-          ./deploy.sh
+          API_BODY=$(cat openapi_base64.json)
+          API_ID=$(aws apigateway get-rest-apis --query "items[?name=='user-gateway'].id | [0]" --output text)
+          if [ "$API_ID" == "None" ]; then
+            API_ID=$(aws apigateway import-rest-api --body "$API_BODY" --parameters endpointConfigurationTypes=REGIONAL --region ap-northeast-2 --query 'id' --output text)
+            aws apigateway update-rest-api --rest-api-id $API_ID --patch-operations op=replace,path=/name,value="user-gateway"
+          else
+            aws apigateway put-rest-api --rest-api-id $API_ID --mode overwrite --body "$API_BODY"
+          fi
+          aws apigateway create-deployment --rest-api-id $API_ID --stage-name prod

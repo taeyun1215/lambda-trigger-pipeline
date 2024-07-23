@@ -17,12 +17,12 @@ echo "API_ID: ${API_ID}"
 if [ -z "$API_ID" ] || [ "$API_ID" == "None" ]; then
   echo "Creating new API Gateway..."
   # API Gateway 생성
-  API_ID=$(aws apigateway import-rest-api --body "file://${OPENAPI_FILE}" --query 'id' --output text --region ${REGION})
+  API_ID=$(aws apigateway import-rest-api --body "fileb://${OPENAPI_FILE}" --query 'id' --output text --region ${REGION})
   aws apigateway update-rest-api --rest-api-id $API_ID --patch-operations op=replace,path=/name,value="${API_NAME}" --region ${REGION}
 else
   echo "Updating existing API Gateway..."
   # API Gateway 업데이트
-  aws apigateway put-rest-api --rest-api-id $API_ID --mode overwrite --body "file://${OPENAPI_FILE}" --region ${REGION}
+  aws apigateway put-rest-api --rest-api-id $API_ID --mode overwrite --body "fileb://${OPENAPI_FILE}" --region ${REGION}
 fi
 
 echo "Updated API_ID: ${API_ID}"
