@@ -50,3 +50,26 @@ jobs:
           else
             aws lambda create-function --function-name user --runtime java17 --role arn:aws:iam::905418281075:role/taeyun --handler com.example.demo.handler.StreamLambdaHandler::handleRequest --code S3Bucket=spring-aws-lambda,S3Key=demo-0.0.1-SNAPSHOT.jar --description "My Java Lambda function" --timeout 15 --memory-size 512;
           fi
+
+      - name: Start Spring Boot and Generate OpenAPI Spec
+        run: |
+          nohup ./gradlew bootRun &
+          sleep 30
+          curl -o openapi.json http://localhost:8080/v3/api-docs
+
+      - name: Upload OpenAPI Spec to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'ap-northeast-2'
+        run: |
+          aws s3 cp openapi.json s3://spring-aws-lambda/openapi.json
+
+      - name: Create or Update API Gateway
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'ap-northeast-2'
+        run: |
+          API_ID=$(aws apigateway import-rest-api --body 'file://openapi.json' --parameters endpointConfigurationTypes=REGIONAL --region ap-northeast-2 --query 'id' --output text)
+          aws apigateway create-deployment --rest-api-id $API_ID --stage-name prod
