@@ -113,7 +113,7 @@ jobs:
 
           for RESOURCE_ID in $RESOURCE_IDS; do
             echo "Processing RESOURCE_ID: ${RESOURCE_ID}"
-            METHODS=$(aws apigateway get-resource --rest-api-id $API_ID --resource-id $RESOURCE_ID --query "resourceMethods.keys()" --output text --region ${REGION})
+            METHODS=$(aws apigateway get-resource --rest-api-id $API_ID --resource-id $RESOURCE_ID --query "resourceMethods | keys(@)" --output text --region ${REGION})
             echo "METHODS for RESOURCE_ID ${RESOURCE_ID}: ${METHODS}"
             for METHOD in $METHODS; do
               echo "Adding integration for METHOD: ${METHOD} on RESOURCE_ID: ${RESOURCE_ID}"
