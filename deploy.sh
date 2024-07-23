@@ -12,7 +12,9 @@ OPENAPI_FILE="openapi.json"
 # API Gateway ID 가져오기
 API_ID=$(aws apigateway get-rest-apis --query "items[?name=='${API_NAME}'].id" --output text --region ${REGION})
 
-if [ "$API_ID" == "None" ]; then
+echo "API_ID: ${API_ID}"
+
+if [ "$API_ID" == "None" ] || [ -z "$API_ID" ]; then
   # API Gateway 생성
   API_ID=$(aws apigateway import-rest-api --body "file://${OPENAPI_FILE}" --query 'id' --output text --region ${REGION})
   aws apigateway update-rest-api --rest-api-id $API_ID --patch-operations op=replace,path=/name,value="${API_NAME}" --region ${REGION}
@@ -21,11 +23,18 @@ else
   aws apigateway put-rest-api --rest-api-id $API_ID --mode overwrite --body "file://${OPENAPI_FILE}" --region ${REGION}
 fi
 
+echo "Updated API_ID: ${API_ID}"
+
 # API Gateway 경로 및 메서드 가져오기
 RESOURCE_IDS=$(aws apigateway get-resources --rest-api-id $API_ID --query "items[].id" --output text --region ${REGION})
+echo "RESOURCE_IDS: ${RESOURCE_IDS}"
+
 for RESOURCE_ID in $RESOURCE_IDS; do
-  METHODS=$(aws apigateway get-resource --rest-api-id $API_ID --resource-id $RESOURCE_ID --query "resourceMethods" --output text --region ${REGION})
+  echo "Processing RESOURCE_ID: ${RESOURCE_ID}"
+  METHODS=$(aws apigateway get-resource --rest-api-id $API_ID --resource-id $RESOURCE_ID --query "resourceMethods.keys()" --output text --region ${REGION})
+  echo "METHODS for RESOURCE_ID ${RESOURCE_ID}: ${METHODS}"
   for METHOD in $METHODS; do
+    echo "Adding integration for METHOD: ${METHOD} on RESOURCE_ID: ${RESOURCE_ID}"
     # Lambda 통합 추가
     aws apigateway put-integration --rest-api-id $API_ID --resource-id $RESOURCE_ID --http-method $METHOD \
       --type AWS_PROXY --integration-http-method POST \
