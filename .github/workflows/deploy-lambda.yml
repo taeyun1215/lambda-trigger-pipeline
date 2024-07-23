@@ -115,7 +115,7 @@ jobs:
             echo "Processing RESOURCE_ID: ${RESOURCE_ID}"
             METHODS=$(aws apigateway get-resource --rest-api-id $API_ID --resource-id $RESOURCE_ID --query "resourceMethods | keys(@)" --output text --region ${REGION})
             echo "METHODS raw output: ${METHODS}"
-            if [ -z "$METHODS" ] || [ "$METHODS" == "None" ]; then
+            if [ -z "$METHODS" ] || [ "$METHODS" == "None" ] || [ "$METHODS" == "null" ]; then
               echo "No methods found for RESOURCE_ID: ${RESOURCE_ID}"
               continue
             fi
