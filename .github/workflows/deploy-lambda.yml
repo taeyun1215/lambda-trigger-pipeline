@@ -70,11 +70,16 @@ jobs:
         run: |
           aws s3 cp openapi.json s3://spring-aws-lambda/openapi.json
 
+      - name: Encode OpenAPI Spec
+        run: |
+          base64 openapi.json > openapi_base64.json
+
       - name: Create or Update API Gateway
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: 'ap-northeast-2'
         run: |
-          API_ID=$(aws apigateway import-rest-api --body 'file://openapi.json' --parameters endpointConfigurationTypes=REGIONAL --region ap-northeast-2 --query 'id' --output text)
+          API_BODY=$(cat openapi_base64.json)
+          API_ID=$(aws apigateway import-rest-api --body "$API_BODY" --parameters endpointConfigurationTypes=REGIONAL --region ap-northeast-2 --query 'id' --output text)
           aws apigateway create-deployment --rest-api-id $API_ID --stage-name prod
