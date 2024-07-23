@@ -70,6 +70,10 @@ jobs:
         run: |
           aws s3 cp openapi.json s3://spring-aws-lambda/openapi.json
 
+      - name: Encode OpenAPI Spec
+        run: |
+          base64 openapi.json > openapi_base64.json
+
       - name: Create or Update API Gateway and Integrate with Lambda
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -81,7 +85,7 @@ jobs:
           LAMBDA_FUNCTION_NAME="user"
           API_NAME="user-gateway"
           STAGE_NAME="prod"
-          OPENAPI_FILE="openapi.json"
+          OPENAPI_FILE="openapi_base64.json"
 
           # API Gateway ID 가져오기
           API_ID=$(aws apigateway get-rest-apis --query "items[?name=='${API_NAME}'].id" --output text --region ${REGION})
@@ -91,12 +95,14 @@ jobs:
           if [ -z "$API_ID" ] || [ "$API_ID" == "None" ]; then
             echo "Creating new API Gateway..."
             # API Gateway 생성
-            API_ID=$(aws apigateway import-rest-api --body "file://${OPENAPI_FILE}" --query 'id' --output text --region ${REGION})
+            API_BODY=$(cat ${OPENAPI_FILE})
+            API_ID=$(aws apigateway import-rest-api --body "$API_BODY" --query 'id' --output text --region ${REGION})
             aws apigateway update-rest-api --rest-api-id $API_ID --patch-operations op=replace,path=/name,value="${API_NAME}" --region ${REGION}
           else
             echo "Updating existing API Gateway..."
             # API Gateway 업데이트
-            aws apigateway put-rest-api --rest-api-id $API_ID --mode overwrite --body "file://${OPENAPI_FILE}" --region ${REGION}
+            API_BODY=$(cat ${OPENAPI_FILE})
+            aws apigateway put-rest-api --rest-api-id $API_ID --mode overwrite --body "$API_BODY" --region ${REGION}
           fi
 
           echo "Updated API_ID: ${API_ID}"
