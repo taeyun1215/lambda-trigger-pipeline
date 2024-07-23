@@ -48,5 +48,5 @@ jobs:
           if aws lambda get-function --function-name user; then
             aws lambda update-function-code --function-name user --s3-bucket spring-aws-lambda --s3-key demo-0.0.1-SNAPSHOT.jar;
           else
-            aws lambda create-function --function-name user --runtime java11 --role arn:aws:iam::905418281075:role/taeyun --handler com.example.demo.handler.StreamLambdaHandler::handleRequest --code S3Bucket=spring-aws-lambda,S3Key=demo-0.0.1-SNAPSHOT.jar --description "My Java Lambda function" --timeout 15 --memory-size 512;
+            aws lambda create-function --function-name user --runtime java17 --role arn:aws:iam::905418281075:role/taeyun --handler com.example.demo.handler.StreamLambdaHandler::handleRequest --code S3Bucket=spring-aws-lambda,S3Key=demo-0.0.1-SNAPSHOT.jar --description "My Java Lambda function" --timeout 15 --memory-size 512;
           fi
