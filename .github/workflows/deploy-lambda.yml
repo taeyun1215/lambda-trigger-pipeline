@@ -52,6 +52,11 @@ jobs:
           fi
 
       - name: Start Spring Boot and Generate OpenAPI Spec
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_DRIVER: ${{ secrets.DB_DRIVER }}
         run: |
           nohup ./gradlew bootRun &
           sleep 30

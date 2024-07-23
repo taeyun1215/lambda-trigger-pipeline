@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3306/spring-aws-lambda
-    username: root
-    password: 6548
-    driver-class-name: org.mariadb.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: ${DB_DRIVER}
   jpa:
     hibernate:
       ddl-auto: create
