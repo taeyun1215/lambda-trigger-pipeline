@@ -131,6 +131,13 @@ jobs:
                   --type AWS_PROXY --integration-http-method POST \
                   --uri arn:aws:apigateway:${REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:${REGION}:$(aws sts get-caller-identity --query "Account" --output text):function:${LAMBDA_FUNCTION_NAME}/invocations \
                   --region ${REGION}
+
+                # Lambda 권한 추가
+                aws lambda add-permission --function-name $LAMBDA_FUNCTION_NAME \
+                  --statement-id "apigateway-$(uuidgen)" \
+                  --action "lambda:InvokeFunction" \
+                  --principal apigateway.amazonaws.com \
+                  --source-arn "arn:aws:execute-api:${REGION}:$(aws sts get-caller-identity --query "Account" --output text):${API_ID}/*/${METHOD}${RESOURCE.path}"
               done
             else
               echo "No methods found for RESOURCE_ID: ${RESOURCE_ID}"
