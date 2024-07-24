@@ -84,7 +84,7 @@ jobs:
         run: |
           # 변수 설정
           REGION="ap-northeast-2"
-          LAMBDA_FUNCTION_NAME="user"
+          LAMBDA_FUNCTION_NAME="demo-lambda"
           API_NAME="demo-gateway"
           STAGE_NAME="prod"
           OPENAPI_FILE="openapi_base64.json"
