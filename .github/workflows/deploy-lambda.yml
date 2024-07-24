@@ -37,7 +37,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: 'ap-northeast-2'
         run: |
-          aws lambda get-function --function-name user || echo "Function does not exist"
+          LAMBDA_FUNCTION_NAME="demo-lambda"
+          aws lambda get-function --function-name $LAMBDA_FUNCTION_NAME || echo "Function does not exist"
 
       - name: Create or Update Lambda Function
         env:
@@ -45,10 +46,11 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: 'ap-northeast-2'
         run: |
-          if aws lambda get-function --function-name user; then
-            aws lambda update-function-code --function-name user --s3-bucket spring-aws-lambda --s3-key demo-0.0.1-SNAPSHOT.jar;
+          LAMBDA_FUNCTION_NAME="demo-lambda"
+          if aws lambda get-function --function-name $LAMBDA_FUNCTION_NAME; then
+            aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --s3-bucket spring-aws-lambda --s3-key demo-0.0.1-SNAPSHOT.jar;
           else
-            aws lambda create-function --function-name user --runtime java17 --role arn:aws:iam::905418281075:role/taeyun --handler com.example.demo.handler.StreamLambdaHandler::handleRequest --code S3Bucket=spring-aws-lambda,S3Key=demo-0.0.1-SNAPSHOT.jar --description "My Java Lambda function" --timeout 15 --memory-size 512;
+            aws lambda create-function --function-name $LAMBDA_FUNCTION_NAME --runtime java17 --role arn:aws:iam::905418281075:role/taeyun --handler com.example.demo.handler.StreamLambdaHandler::handleRequest --code S3Bucket=spring-aws-lambda,S3Key=demo-0.0.1-SNAPSHOT.jar --description "My Java Lambda function" --timeout 15 --memory-size 512;
           fi
 
       - name: Start Spring Boot and Generate OpenAPI Spec
