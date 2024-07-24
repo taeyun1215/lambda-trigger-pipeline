@@ -116,6 +116,7 @@ jobs:
           for RESOURCE_ID in $RESOURCE_IDS; do
             echo "Processing RESOURCE_ID: ${RESOURCE_ID}"
             RESOURCE=$(aws apigateway get-resource --rest-api-id $API_ID --resource-id $RESOURCE_ID --region ${REGION})
+            RESOURCE_PATH=$(echo $RESOURCE | jq -r '.path')
             if [ "$(echo $RESOURCE | jq '.resourceMethods')" != "null" ]; then
               METHODS=$(echo $RESOURCE | jq -r '.resourceMethods | keys | @tsv')
               echo "METHODS raw output: ${METHODS}"
@@ -137,7 +138,7 @@ jobs:
                   --statement-id "apigateway-$(uuidgen)" \
                   --action "lambda:InvokeFunction" \
                   --principal apigateway.amazonaws.com \
-                  --source-arn "arn:aws:execute-api:${REGION}:$(aws sts get-caller-identity --query "Account" --output text):${API_ID}/*/${METHOD}${RESOURCE.path}"
+                  --source-arn "arn:aws:execute-api:${REGION}:$(aws sts get-caller-identity --query "Account" --output text):${API_ID}/*/${METHOD}${RESOURCE_PATH}"
               done
             else
               echo "No methods found for RESOURCE_ID: ${RESOURCE_ID}"
