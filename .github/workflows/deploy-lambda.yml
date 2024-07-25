@@ -99,13 +99,15 @@ jobs:
             # API Gateway 생성
             API_BODY=$(cat ${OPENAPI_FILE})
             API_ID=$(aws apigateway import-rest-api --body "$API_BODY" --query 'id' --output text --region ${REGION})
-            aws apigateway update-rest-api --rest-api-id $API_ID --patch-operations op=replace,path=/name,value="${API_NAME}" --region ${REGION}
           else
             echo "Updating existing API Gateway..."
             # API Gateway 업데이트
             API_BODY=$(cat ${OPENAPI_FILE})
             aws apigateway put-rest-api --rest-api-id $API_ID --mode overwrite --body "$API_BODY" --region ${REGION}
           fi
+
+          # API Gateway 이름 설정 (생성 후 및 업데이트 후 모두)
+          aws apigateway update-rest-api --rest-api-id $API_ID --patch-operations op=replace,path=/name,value="${API_NAME}" --region ${REGION}
 
           echo "Updated API_ID: ${API_ID}"
 
