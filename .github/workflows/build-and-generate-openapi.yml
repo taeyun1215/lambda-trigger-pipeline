@@ -51,8 +51,8 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          S3_BUCKET: spring-aws-lambda
-          JAR_FILE: demo-0.0.1-SNAPSHOT.jar
+          S3_BUCKET: 'spring-aws-lambda'
+          JAR_FILE: 'demo-0.0.1-SNAPSHOT.jar'
         run: |
           # 현상 관리를 위해 OpenAPI Spec을 S3에 업로드
           aws s3 cp openapi.json s3://$S3_BUCKET/openapi.json
