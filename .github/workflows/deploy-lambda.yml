@@ -30,19 +30,19 @@ jobs:
       # 람다 함수 생성 또는 업데이트
       - name: Create or Update Lambda Function
         env:
-          S3_BUCKET: ${{ secrets.S3_BUCKET }} # spring-aws-lambda
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }} # spring-aws-lambda
           JAR_FILE: 'demo-0.0.1-SNAPSHOT.jar'
           ROLE_ARN: 'arn:aws:iam::905418281075:role/taeyun'
         run: |
           if aws lambda get-function --function-name $LAMBDA_FUNCTION_NAME; then
-            aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --s3-bucket $S3_BUCKET --s3-key $JAR_FILE;
+            aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --s3-bucket $S3_BUCKET_NAME --s3-key $JAR_FILE;
           else
             aws lambda create-function \
               --function-name $LAMBDA_FUNCTION_NAME \
               --runtime java17 \
               --role $ROLE_ARN \
               --handler com.example.demo.handler.StreamLambdaHandler::handleRequest \
-              --code S3Bucket=$S3_BUCKET,S3Key=$JAR_FILE \
+              --code S3Bucket=$S3_BUCKET_NAME,S3Key=$JAR_FILE \
               --description "My Java Lambda function" \
               --timeout 15 \
               --memory-size 512;

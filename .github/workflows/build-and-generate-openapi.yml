@@ -52,12 +52,12 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }} # ap-northeast-2
-          S3_BUCKET: ${{ secrets.S3_BUCKET }} # spring-aws-lambda
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }} # spring-aws-lambda
           JAR_FILE: 'demo-0.0.1-SNAPSHOT.jar'
         run: |
           # 현상 관리를 위해 OpenAPI Spec을 S3에 업로드
-          aws s3 cp openapi.json s3://$S3_BUCKET/openapi.json
-          aws s3 cp openapi_base64.json s3://$S3_BUCKET/openapi_base64.json
+          aws s3 cp openapi.json s3://$S3_BUCKET_NAME/openapi.json
+          aws s3 cp openapi_base64.json s3://$S3_BUCKET_NAME/openapi_base64.json
 
           # 현상 관리를 위해 JAR 파일을 S3에 업로드
-          aws s3 cp build/libs/$JAR_FILE s3://$S3_BUCKET/$JAR_FILE
+          aws s3 cp build/libs/$JAR_FILE s3://$S3_BUCKET_NAME/$JAR_FILE
