@@ -10,6 +10,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      LAMBDA_FUNCTION_NAME: ${{ secrets.LAMBDA_FUNCTION_NAME }} # demo-lambda
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ap-northeast-2 # AWS Korea Region
+
     steps:
       # 저장소 체크아웃
       - name: Checkout repository
@@ -18,24 +24,26 @@ jobs:
       # 람다 함수 존재 여부 확인
       - name: Check if Lambda Exists
         id: check_lambda
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: 'ap-northeast-2'
         run: |
-          LAMBDA_FUNCTION_NAME="demo-lambda"
           aws lambda get-function --function-name $LAMBDA_FUNCTION_NAME || echo "Function does not exist"
 
       # 람다 함수 생성 또는 업데이트
       - name: Create or Update Lambda Function
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: 'ap-northeast-2'
+          S3_BUCKET: spring-aws-lambda
+          JAR_FILE: demo-0.0.1-SNAPSHOT.jar
+          ROLE_ARN: arn:aws:iam::905418281075:role/taeyun
         run: |
-          LAMBDA_FUNCTION_NAME="demo-lambda"
           if aws lambda get-function --function-name $LAMBDA_FUNCTION_NAME; then
-            aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --s3-bucket spring-aws-lambda --s3-key demo-0.0.1-SNAPSHOT.jar;
+            aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --s3-bucket $S3_BUCKET --s3-key $JAR_FILE;
           else
-            aws lambda create-function --function-name $LAMBDA_FUNCTION_NAME --runtime java17 --role arn:aws:iam::905418281075:role/taeyun --handler com.example.demo.handler.StreamLambdaHandler::handleRequest --code S3Bucket=spring-aws-lambda,S3Key=demo-0.0.1-SNAPSHOT.jar --description "My Java Lambda function" --timeout 15 --memory-size 512;
+            aws lambda create-function \
+              --function-name $LAMBDA_FUNCTION_NAME \
+              --runtime java17 \
+              --role $ROLE_ARN \
+              --handler com.example.demo.handler.StreamLambdaHandler::handleRequest \
+              --code S3Bucket=$S3_BUCKET,S3Key=$JAR_FILE \
+              --description "My Java Lambda function" \
+              --timeout 15 \
+              --memory-size 512;
           fi
