@@ -1,0 +1,61 @@
+name: Build, Run, Generate OpenAPI Spec, and Upload to S3
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 저장소 체크아웃
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # JDK 17 설정
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      # Gradle로 빌드
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      # Spring Boot 시작
+      - name: Start Spring Boot
+        run: nohup ./gradlew bootRun &
+
+      # Spring Boot 시작 대기
+      - name: Wait for Spring Boot to start
+        run: sleep 15
+
+      # OpenAPI 스펙 생성
+      - name: Generate OpenAPI Spec
+        run: curl -o openapi.json http://localhost:8080/v3/api-docs
+
+      # OpenAPI 스펙 인코딩
+      - name: Encode OpenAPI Spec
+        run: base64 openapi.json > openapi_base64.json
+
+      # 현상 관리를 위해 OpenAPI Spec을 S3에 업로드
+      - name: Upload OpenAPI Spec to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'ap-northeast-2'
+        run: |
+          aws s3 cp openapi.json s3://spring-aws-lambda/openapi.json
+          aws s3 cp openapi_base64.json s3://spring-aws-lambda/openapi_base64.json
+
+      # 현상 관리를 위해 JAR 파일을 S3에 업로드
+      - name: Upload JAR to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'ap-northeast-2'
+        run: |
+          aws s3 cp build/libs/demo-0.0.1-SNAPSHOT.jar s3://spring-aws-lambda/demo-0.0.1-SNAPSHOT.jar
