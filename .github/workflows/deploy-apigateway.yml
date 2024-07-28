@@ -72,33 +72,26 @@ jobs:
               for METHOD in $METHODS; do
                 echo "Adding integration for METHOD: ${METHOD} on RESOURCE_ID: ${RESOURCE_ID}"
                 if [ "$METHOD" == "GET" ]; then
-                  # GET 요청의 경우 쿼리 스트링 및 경로 매개변수 통합 설정
+                  # GET 메서드용 통합 추가
                   aws apigateway put-integration --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD \
-                    --type AWS_PROXY --integration-http-method GET \
+                    --type AWS_PROXY --integration-http-method POST \
                     --uri arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):function:${LAMBDA_FUNCTION_NAME}/invocations \
                     --request-parameters '{"integration.request.querystring.parameter-name":"method.request.querystring.parameter-name","integration.request.path.parameter-name":"method.request.path.parameter-name"}' \
                     --region $AWS_REGION
-
-                  # Lambda 권한 추가
-                  aws lambda add-permission --function-name $LAMBDA_FUNCTION_NAME \
-                    --statement-id "apigateway-$(uuidgen)" \
-                    --action "lambda:InvokeFunction" \
-                    --principal apigateway.amazonaws.com \
-                    --source-arn "arn:aws:execute-api:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):${API_GATEWAY_ID}/*/${METHOD}${RESOURCE_PATH}"
-                else
-                  # POST 요청의 경우
+                elif [ "$METHOD" == "POST" ]; then
+                  # POST 메서드용 통합 추가
                   aws apigateway put-integration --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD \
                     --type AWS_PROXY --integration-http-method POST \
                     --uri arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):function:${LAMBDA_FUNCTION_NAME}/invocations \
                     --region $AWS_REGION
-
-                  # Lambda 권한 추가
-                  aws lambda add-permission --function-name $LAMBDA_FUNCTION_NAME \
-                    --statement-id "apigateway-$(uuidgen)" \
-                    --action "lambda:InvokeFunction" \
-                    --principal apigateway.amazonaws.com \
-                    --source-arn "arn:aws:execute-api:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):${API_GATEWAY_ID}/*/${METHOD}${RESOURCE_PATH}"
                 fi
+
+                # Lambda 권한 추가
+                aws lambda add-permission --function-name $LAMBDA_FUNCTION_NAME \
+                  --statement-id "apigateway-$(uuidgen)" \
+                  --action "lambda:InvokeFunction" \
+                  --principal apigateway.amazonaws.com \
+                  --source-arn "arn:aws:execute-api:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):${API_GATEWAY_ID}/*/${METHOD}${RESOURCE_PATH}"
               done
             else
               echo "No methods found for RESOURCE_ID: ${RESOURCE_ID}"
