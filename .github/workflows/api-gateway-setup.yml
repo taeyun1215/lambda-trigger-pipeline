@@ -77,11 +77,10 @@ jobs:
               for METHOD in $METHODS; do
                 echo "Adding integration for METHOD: ${METHOD} on RESOURCE_ID: ${RESOURCE_ID}"
                 if [ "$METHOD" == "GET" ]; then
-                  # GET 메서드용 통합 추가
                   aws apigateway put-integration --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD \
                     --type AWS_PROXY --integration-http-method POST \
                     --uri arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):function:${LAMBDA_FUNCTION_NAME}/invocations \
-                    --request-parameters '{"integration.request.querystring.parameter-name":"method.request.querystring.parameter-name","integration.request.path.parameter-name":"method.request.path.parameter-name"}' \
+                    --request-parameters '{"integration.request.querystring.parameter-name":"method.request.querystring.parameter-name","integration.request.path.username":"method.request.path.username"}' \
                     --region $AWS_REGION
 
                   # GET 메서드 응답 콘텐츠 유형 설정
@@ -89,7 +88,6 @@ jobs:
                     --response-models application/json=Empty --region $AWS_REGION
 
                 elif [ "$METHOD" == "POST" ]; then
-                  # POST 메서드용 통합 추가
                   aws apigateway put-integration --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD \
                     --type AWS_PROXY --integration-http-method POST \
                     --uri arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):function:${LAMBDA_FUNCTION_NAME}/invocations \
