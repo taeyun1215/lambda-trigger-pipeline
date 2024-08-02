@@ -74,9 +74,9 @@ jobs:
                     --uri arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):function:${LAMBDA_FUNCTION_NAME}/invocations \
                     --request-parameters '{"integration.request.querystring.parameter-name":"method.request.querystring.parameter-name","integration.request.path.parameter-name":"method.request.path.parameter-name"}' \
                     --region $AWS_REGION
-          
+
                   aws apigateway put-method-response --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method GET --status-code 200 \
-                    --response-models application/json=Empty --region $AWS_REGION
+                    --response-models '{"application/json": "Empty"}' --region $AWS_REGION
 
                 elif [ "$METHOD" == "POST" ]; then
                   aws apigateway put-integration --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD \
