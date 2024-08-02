@@ -86,7 +86,7 @@ jobs:
                   # GET 메서드 응답 콘텐츠 유형 설정
                   aws apigateway delete-method-response --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method GET --status-code 200 --region $AWS_REGION || true
                   aws apigateway put-method-response --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method GET --status-code 200 \
-                    --response-models '{"application/json": "Empty"}' --region $AWS_REGION
+                    --response-models application/json=Empty --region $AWS_REGION
 
                 elif [ "$METHOD" == "POST" ]; then
                   aws apigateway put-integration --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD \
