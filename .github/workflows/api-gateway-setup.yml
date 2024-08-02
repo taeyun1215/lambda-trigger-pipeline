@@ -86,7 +86,7 @@ jobs:
 
                   # GET 메서드 응답 콘텐츠 유형 설정
                   aws apigateway put-method-response --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method GET --status-code 200 \
-                    --response-models '{"application/json": "Empty"}' --region $AWS_REGION
+                    --response-models application/json=Empty --region $AWS_REGION
 
                 elif [ "$METHOD" == "POST" ]; then
                   # POST 메서드용 통합 추가
