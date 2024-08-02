@@ -1,6 +1,7 @@
 package com.example.demo.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +30,8 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{username}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username) {
+    @GetMapping(value = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
         Optional<User> userOptional = userService.findUserByUsername(username);
         return userOptional.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(404).body(null));
