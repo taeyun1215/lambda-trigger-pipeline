@@ -1,76 +1,76 @@
-name: Integrate API Gateway with Lambda and Set Response Content Type
-
-on:
-  workflow_run:
-    workflows: ["Setup API Gateway"]
-    types:
-      - completed
-
-jobs:
-  integrate_api_gateway:
-    runs-on: ubuntu-latest
-
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
-      LAMBDA_FUNCTION_NAME: ${{ secrets.LAMBDA_FUNCTION_NAME }}
-      API_GATEWAY_NAME: ${{ secrets.API_GATEWAY_NAME }}
-
-    steps:
-      # 저장소 체크아웃
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      # API Gateway와 Lambda 통합 및 응답 콘텐츠 유형 설정
-      - name: Integrate API Gateway and Lambda
-        run: |
-          API_GATEWAY_ID=$(aws apigateway get-rest-apis --query "items[?name=='${API_GATEWAY_NAME}'].id" --output text --region $AWS_REGION)
-          echo "API_GATEWAY_ID: ${API_GATEWAY_ID}"
-
-          RESOURCE_IDS=$(aws apigateway get-resources --rest-api-id $API_GATEWAY_ID --query "items[].id" --output text --region $AWS_REGION)
-          echo "RESOURCE_IDS: ${RESOURCE_IDS}"
-
-          for RESOURCE_ID in $RESOURCE_IDS; do
-            echo "Processing RESOURCE_ID: ${RESOURCE_ID}"
-            RESOURCE=$(aws apigateway get-resource --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --region $AWS_REGION)
-            RESOURCE_PATH=$(echo $RESOURCE | jq -r '.path')
-            if [ "$(echo $RESOURCE | jq '.resourceMethods')" != "null" ]; then
-              METHODS=$(echo $RESOURCE | jq -r '.resourceMethods | keys | @tsv')
-              echo "METHODS raw output: ${METHODS}"
-              if [ -z "$METHODS" ] || [ "$METHODS" == "None" ] || [ "$METHODS" == "null" ]; then
-                echo "No methods found for RESOURCE_ID: ${RESOURCE_ID}"
-                continue
-              fi
-              echo "METHODS for RESOURCE_ID ${RESOURCE_ID}: ${METHODS}"
-              for METHOD in $METHODS; do
-                echo "Adding integration for METHOD: ${METHOD} on RESOURCE_ID: ${RESOURCE_ID}"
-                if [ "$METHOD" == "GET" ]; then
-                  aws apigateway put-integration --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD \
-                    --type AWS_PROXY --integration-http-method POST \
-                    --uri arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):function:${LAMBDA_FUNCTION_NAME}/invocations \
-                    --request-parameters '{"integration.request.querystring.parameter-name":"method.request.querystring.parameter-name","integration.request.path.parameter-name":"method.request.path.parameter-name"}' \
-                    --region $AWS_REGION
-          
-                  aws apigateway put-method-response --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method GET --status-code 200 \
-                    --response-models application/json=Empty --region $AWS_REGION
-
-                elif [ "$METHOD" == "POST" ]; then
-                  aws apigateway put-integration --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD \
-                    --type AWS_PROXY --integration-http-method POST \
-                    --uri arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):function:${LAMBDA_FUNCTION_NAME}/invocations \
-                    --region $AWS_REGION
-                fi
-
-                aws lambda add-permission --function-name $LAMBDA_FUNCTION_NAME \
-                  --statement-id "apigateway-$(uuidgen)" \
-                  --action "lambda:InvokeFunction" \
-                  --principal apigateway.amazonaws.com \
-                  --source-arn "arn:aws:execute-api:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):${API_GATEWAY_ID}/*/${METHOD}${RESOURCE_PATH}"
-              done
-            else
-              echo "No methods found for RESOURCE_ID: ${RESOURCE_ID}"
-            fi
-          done
-
-          aws apigateway create-deployment --rest-api-id $API_GATEWAY_ID --stage-name $STAGE_NAME --region $AWS_REGION
+#name: Integrate API Gateway with Lambda and Set Response Content Type
+#
+#on:
+#  workflow_run:
+#    workflows: ["Setup API Gateway"]
+#    types:
+#      - completed
+#
+#jobs:
+#  integrate_api_gateway:
+#    runs-on: ubuntu-latest
+#
+#    env:
+#      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#      AWS_REGION: ${{ secrets.AWS_REGION }}
+#      LAMBDA_FUNCTION_NAME: ${{ secrets.LAMBDA_FUNCTION_NAME }}
+#      API_GATEWAY_NAME: ${{ secrets.API_GATEWAY_NAME }}
+#
+#    steps:
+#      # 저장소 체크아웃
+#      - name: Checkout repository
+#        uses: actions/checkout@v2
+#
+#      # API Gateway와 Lambda 통합 및 응답 콘텐츠 유형 설정
+#      - name: Integrate API Gateway and Lambda
+#        run: |
+#          API_GATEWAY_ID=$(aws apigateway get-rest-apis --query "items[?name=='${API_GATEWAY_NAME}'].id" --output text --region $AWS_REGION)
+#          echo "API_GATEWAY_ID: ${API_GATEWAY_ID}"
+#
+#          RESOURCE_IDS=$(aws apigateway get-resources --rest-api-id $API_GATEWAY_ID --query "items[].id" --output text --region $AWS_REGION)
+#          echo "RESOURCE_IDS: ${RESOURCE_IDS}"
+#
+#          for RESOURCE_ID in $RESOURCE_IDS; do
+#            echo "Processing RESOURCE_ID: ${RESOURCE_ID}"
+#            RESOURCE=$(aws apigateway get-resource --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --region $AWS_REGION)
+#            RESOURCE_PATH=$(echo $RESOURCE | jq -r '.path')
+#            if [ "$(echo $RESOURCE | jq '.resourceMethods')" != "null" ]; then
+#              METHODS=$(echo $RESOURCE | jq -r '.resourceMethods | keys | @tsv')
+#              echo "METHODS raw output: ${METHODS}"
+#              if [ -z "$METHODS" ] || [ "$METHODS" == "None" ] || [ "$METHODS" == "null" ]; then
+#                echo "No methods found for RESOURCE_ID: ${RESOURCE_ID}"
+#                continue
+#              fi
+#              echo "METHODS for RESOURCE_ID ${RESOURCE_ID}: ${METHODS}"
+#              for METHOD in $METHODS; do
+#                echo "Adding integration for METHOD: ${METHOD} on RESOURCE_ID: ${RESOURCE_ID}"
+#                if [ "$METHOD" == "GET" ]; then
+#                  aws apigateway put-integration --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD \
+#                    --type AWS_PROXY --integration-http-method POST \
+#                    --uri arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):function:${LAMBDA_FUNCTION_NAME}/invocations \
+#                    --request-parameters '{"integration.request.querystring.parameter-name":"method.request.querystring.parameter-name","integration.request.path.parameter-name":"method.request.path.parameter-name"}' \
+#                    --region $AWS_REGION
+#
+#                  aws apigateway put-method-response --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method GET --status-code 200 \
+#                    --response-models application/json=Empty --region $AWS_REGION
+#
+#                elif [ "$METHOD" == "POST" ]; then
+#                  aws apigateway put-integration --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD \
+#                    --type AWS_PROXY --integration-http-method POST \
+#                    --uri arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):function:${LAMBDA_FUNCTION_NAME}/invocations \
+#                    --region $AWS_REGION
+#                fi
+#
+#                aws lambda add-permission --function-name $LAMBDA_FUNCTION_NAME \
+#                  --statement-id "apigateway-$(uuidgen)" \
+#                  --action "lambda:InvokeFunction" \
+#                  --principal apigateway.amazonaws.com \
+#                  --source-arn "arn:aws:execute-api:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):${API_GATEWAY_ID}/*/${METHOD}${RESOURCE_PATH}"
+#              done
+#            else
+#              echo "No methods found for RESOURCE_ID: ${RESOURCE_ID}"
+#            fi
+#          done
+#
+#          aws apigateway create-deployment --rest-api-id $API_GATEWAY_ID --stage-name $STAGE_NAME --region $AWS_REGION

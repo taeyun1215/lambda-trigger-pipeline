@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
+    public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username) {
         Optional<User> userOptional = userService.findUserByUsername(username);
         return userOptional.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(404).body(null));
