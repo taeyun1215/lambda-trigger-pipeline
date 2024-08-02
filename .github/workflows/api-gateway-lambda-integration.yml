@@ -1,10 +1,7 @@
 name: Integrate API Gateway with Lambda and Set Response Content Type
 
 on:
-  workflow_run:
-    workflows: ["Create API Gateway"]
-    types:
-      - completed
+  workflow_dispatch:
 
 jobs:
   integrate_api_gateway:
@@ -20,9 +17,9 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }} # ap-northeast-2
-          LAMBDA_FUNCTION_NAME: ${{ secrets.LAMBDA_FUNCTION_NAME }} # demo-lambda
-          API_GATEWAY_NAME: ${{ secrets.API_GATEWAY_NAME }} # demo-api-gateway
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          LAMBDA_FUNCTION_NAME: ${{ secrets.LAMBDA_FUNCTION_NAME }}
+          API_GATEWAY_NAME: ${{ secrets.API_GATEWAY_NAME }}
         run: |
           # 변수 설정
           API_GATEWAY_ID=$(aws apigateway get-rest-apis --query "items[?name=='${API_GATEWAY_NAME}'].id" --output text --region $AWS_REGION)
