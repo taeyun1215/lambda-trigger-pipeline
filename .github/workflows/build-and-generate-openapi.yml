@@ -1,9 +1,8 @@
 name: Build, Run, Generate OpenAPI Spec, and Upload to S3
 
 on:
-  push:
-    branches:
-      - main
+  repository_dispatch:
+    types: [deploy-trigger]
 
 jobs:
   build_and_generate:
