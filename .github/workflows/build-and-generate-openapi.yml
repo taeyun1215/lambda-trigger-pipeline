@@ -10,7 +10,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./spring-lambda-mvp
+        working-directory: ./spring-lambda-mvp # /home/runner/work/lambda-trigger-pipeline/lambda-trigger-pipeline/spring-lambda-mvp
 
     steps:
       # spring-lambda-mvp 레포지토리의 코드 체크아웃
@@ -19,7 +19,7 @@ jobs:
         with:
           repository: taeyun1215/spring-lambda-mvp
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          path: spring-lambda-mvp
+          path: spring-lambda-mvp # /home/runner/work/lambda-trigger-pipeline/lambda-trigger-pipeline/spring-lambda-mvp
 
       # JDK 17 설정
       - name: Set up JDK 17
