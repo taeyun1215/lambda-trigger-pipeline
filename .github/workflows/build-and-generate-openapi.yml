@@ -8,10 +8,6 @@ jobs:
   build_and_generate:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ./spring-lambda-mvp
-
     steps:
       # spring-lambda-mvp 레포지토리의 코드 체크아웃
       - name: Checkout spring-lambda-mvp Repository
@@ -19,6 +15,7 @@ jobs:
         with:
           repository: taeyun1215/spring-lambda-mvp
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          path: spring-lambda-mvp
 
       # JDK 17 설정
       - name: Set up JDK 17
@@ -30,6 +27,7 @@ jobs:
       # Gradle로 spring-lambda-mvp 레포지토리 빌드
       - name: Build with Gradle
         run: ./gradlew build
+        working-directory: ./spring-lambda-mvp
 
       # spring-lambda-mvp 레포지토리의 Spring Boot 시작
       - name: Start Spring Boot
@@ -39,6 +37,7 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_DRIVER: ${{ secrets.DB_DRIVER }}
         run: nohup ./gradlew bootRun &
+        working-directory: ./spring-lambda-mvp
 
       # Spring Boot 시작 대기
       - name: Wait for Spring Boot to start
@@ -47,10 +46,12 @@ jobs:
       # OpenAPI 스펙 생성
       - name: Generate OpenAPI Spec
         run: curl -o openapi.json http://localhost:8080/v3/api-docs
+        working-directory: ./spring-lambda-mvp
 
       # OpenAPI 스펙 인코딩
       - name: Encode OpenAPI Spec
         run: base64 openapi.json > openapi_base64.json
+        working-directory: ./spring-lambda-mvp
 
       # OpenAPI Spec과 JAR 파일을 S3에 업로드
       - name: Upload Artifacts to S3
@@ -67,3 +68,4 @@ jobs:
 
           # JAR 파일을 S3에 업로드
           aws s3 cp build/libs/$JAR_FILE s3://$S3_BUCKET_NAME/$JAR_FILE
+        working-directory: ./spring-lambda-mvp
