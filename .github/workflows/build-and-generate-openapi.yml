@@ -8,10 +8,17 @@ jobs:
   build_and_generate:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ./spring-lambda-mvp
+
     steps:
-      # 저장소 체크아웃
-      - name: Checkout repository
+      # spring-lambda-mvp 레포지토리의 코드 체크아웃
+      - name: Checkout spring-lambda-mvp Repository
         uses: actions/checkout@v2
+        with:
+          repository: taeyun1215/spring-lambda-mvp
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
       # JDK 17 설정
       - name: Set up JDK 17
@@ -20,11 +27,11 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
 
-      # Gradle로 빌드
+      # Gradle로 spring-lambda-mvp 레포지토리 빌드
       - name: Build with Gradle
         run: ./gradlew build
 
-      # Spring Boot 시작
+      # spring-lambda-mvp 레포지토리의 Spring Boot 시작
       - name: Start Spring Boot
         env:
           DB_URL: ${{ secrets.DB_URL }}
@@ -50,13 +57,13 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }} # ap-northeast-2
-          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }} # spring-aws-lambda
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
           JAR_FILE: 'demo-0.0.1-SNAPSHOT.jar'
         run: |
-          # 현상 관리를 위해 OpenAPI Spec을 S3에 업로드
+          # OpenAPI Spec을 S3에 업로드
           aws s3 cp openapi.json s3://$S3_BUCKET_NAME/openapi.json
           aws s3 cp openapi_base64.json s3://$S3_BUCKET_NAME/openapi_base64.json
 
-          # 현상 관리를 위해 JAR 파일을 S3에 업로드
+          # JAR 파일을 S3에 업로드
           aws s3 cp build/libs/$JAR_FILE s3://$S3_BUCKET_NAME/$JAR_FILE
