@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="cbda915b-9d40-4ede-8c51-a43d1a239036" name="Changes" comment="fix : jobs add working-directory" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="lambda-trigger-pipeline" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="JpbToolWindowState">
+    <option name="isToolWindowVisible" value="false" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="2jaaSffWhNti2EeqaCSfsXvTgv7" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle./Users/taeyun/Desktop/spring-aws-lambda-init/build.gradle.executor&quot;: &quot;Coverage&quot;,
+    &quot;Gradle.spring-aws-lambda-init [:DemoApplication.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.spring-aws-lambda-init [:UserApplication.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.spring-aws-lambda-init [bootJar].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.spring-aws-lambda-init [build].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.spring-aws-lambda-init [dependencies].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.spring-aws-lambda-init [jar].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.spring-aws-lambda-init [resolveMainClassName].executor&quot;: &quot;Run&quot;,
+    &quot;JAR Application.demo-0.0.1-SNAPSHOT.jar.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/taeyun/Desktop/lambda-trigger-pipeline&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.DemoApplication">
+    <configuration name="DemoApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.example.demo.DemoApplication" />
+      <module name="spring-aws-lambda-init.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.demo.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="spring-aws-lambda-init [bootJar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="bootJar" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="spring-aws-lambda-init [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="build" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="spring-aws-lambda-init [dependencies]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="dependencies" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="demo-0.0.1-SNAPSHOT.jar" type="JarApplication" temporary="true">
+      <option name="JAR_PATH" value="$PROJECT_DIR$/build/libs/demo-0.0.1-SNAPSHOT.jar" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JAR Application.demo-0.0.1-SNAPSHOT.jar" />
+        <item itemvalue="Application.DemoApplication" />
+        <item itemvalue="Gradle.spring-aws-lambda-init [build]" />
+        <item itemvalue="Gradle.spring-aws-lambda-init [dependencies]" />
+        <item itemvalue="Gradle.spring-aws-lambda-init [bootJar]" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="cbda915b-9d40-4ede-8c51-a43d1a239036" name="Changes" comment="" />
+      <created>1721627642897</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1721627642897</updated>
+    </task>
+    <task id="LOCAL-00012" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721731701345</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1721731701345</updated>
+    </task>
+    <task id="LOCAL-00013" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721733489496</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1721733489496</updated>
+    </task>
+    <task id="LOCAL-00014" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721734223948</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1721734223948</updated>
+    </task>
+    <task id="LOCAL-00015" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721734394530</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1721734394530</updated>
+    </task>
+    <task id="LOCAL-00016" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721734577836</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1721734577836</updated>
+    </task>
+    <task id="LOCAL-00017" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721736622649</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1721736622649</updated>
+    </task>
+    <task id="LOCAL-00018" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721737147563</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1721737147563</updated>
+    </task>
+    <task id="LOCAL-00019" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721737727505</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1721737727505</updated>
+    </task>
+    <task id="LOCAL-00020" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721737875367</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1721737875367</updated>
+    </task>
+    <task id="LOCAL-00021" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721738915147</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1721738915147</updated>
+    </task>
+    <task id="LOCAL-00022" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721739294912</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1721739294912</updated>
+    </task>
+    <task id="LOCAL-00023" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721740897038</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1721740897038</updated>
+    </task>
+    <task id="LOCAL-00024" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721741567487</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1721741567487</updated>
+    </task>
+    <task id="LOCAL-00025" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721742833125</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1721742833125</updated>
+    </task>
+    <task id="LOCAL-00026" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721794577813</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1721794577813</updated>
+    </task>
+    <task id="LOCAL-00027" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721796949474</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1721796949474</updated>
+    </task>
+    <task id="LOCAL-00028" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721797462798</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1721797462798</updated>
+    </task>
+    <task id="LOCAL-00029" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721797590609</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1721797590609</updated>
+    </task>
+    <task id="LOCAL-00030" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721797664770</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1721797664770</updated>
+    </task>
+    <task id="LOCAL-00031" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721828473584</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1721828473584</updated>
+    </task>
+    <task id="LOCAL-00032" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721828719271</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1721828719271</updated>
+    </task>
+    <task id="LOCAL-00033" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721873672686</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1721873672686</updated>
+    </task>
+    <task id="LOCAL-00034" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721880361654</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1721880361654</updated>
+    </task>
+    <task id="LOCAL-00035" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721883636960</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1721883636960</updated>
+    </task>
+    <task id="LOCAL-00036" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721883845741</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1721883845741</updated>
+    </task>
+    <task id="LOCAL-00037" summary="feat : github cicd">
+      <option name="closed" value="true" />
+      <created>1721884323116</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1721884323116</updated>
+    </task>
+    <task id="LOCAL-00038" summary="feat : 파일 분리 테스트 및 환경 변수 공통적 관리">
+      <option name="closed" value="true" />
+      <created>1721885546206</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1721885546206</updated>
+    </task>
+    <task id="LOCAL-00039" summary="feat : 파일 분리 테스트 및 환경 변수 공통적 관리">
+      <option name="closed" value="true" />
+      <created>1721885797879</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1721885797879</updated>
+    </task>
+    <task id="LOCAL-00040" summary="feat : 파일 분리 테스트 및 환경 변수 공통적 관리">
+      <option name="closed" value="true" />
+      <created>1721886023976</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1721886023976</updated>
+    </task>
+    <task id="LOCAL-00041" summary="feat : 파일 분리 테스트 및 환경 변수 공통적 관리">
+      <option name="closed" value="true" />
+      <created>1721886870002</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1721886870002</updated>
+    </task>
+    <task id="LOCAL-00042" summary="feat : 파일 분리 테스트 및 환경 변수 공통적 관리">
+      <option name="closed" value="true" />
+      <created>1721888368130</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1721888368130</updated>
+    </task>
+    <task id="LOCAL-00043" summary="feat : api gateway 책임 분리">
+      <option name="closed" value="true" />
+      <created>1722566651853</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1722566651853</updated>
+    </task>
+    <task id="LOCAL-00044" summary="feat : cicd test">
+      <option name="closed" value="true" />
+      <created>1722572697576</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1722572697576</updated>
+    </task>
+    <task id="LOCAL-00045" summary="feat : cicd test">
+      <option name="closed" value="true" />
+      <created>1722574524663</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1722574524663</updated>
+    </task>
+    <task id="LOCAL-00046" summary="feat : cicd test">
+      <option name="closed" value="true" />
+      <created>1722575077711</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1722575077711</updated>
+    </task>
+    <task id="LOCAL-00047" summary="feat : cicd test">
+      <option name="closed" value="true" />
+      <created>1722575324226</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1722575324226</updated>
+    </task>
+    <task id="LOCAL-00048" summary="feat : cicd test">
+      <option name="closed" value="true" />
+      <created>1722575669145</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1722575669145</updated>
+    </task>
+    <task id="LOCAL-00049" summary="feat : cicd test">
+      <option name="closed" value="true" />
+      <created>1722576088630</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1722576088630</updated>
+    </task>
+    <task id="LOCAL-00050" summary="feat : cicd test">
+      <option name="closed" value="true" />
+      <created>1722576802092</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1722576802096</updated>
+    </task>
+    <task id="LOCAL-00051" summary="feat : cicd test">
+      <option name="closed" value="true" />
+      <created>1722577109902</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1722577109902</updated>
+    </task>
+    <task id="LOCAL-00052" summary="feat : cicd test">
+      <option name="closed" value="true" />
+      <created>1722577711569</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1722577711569</updated>
+    </task>
+    <task id="LOCAL-00053" summary="feat : cicd test">
+      <option name="closed" value="true" />
+      <created>1722578564450</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1722578564454</updated>
+    </task>
+    <task id="LOCAL-00054" summary="feat : cicd test">
+      <option name="closed" value="true" />
+      <created>1722579093281</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1722579093281</updated>
+    </task>
+    <task id="LOCAL-00055" summary="feat : cicd test">
+      <option name="closed" value="true" />
+      <created>1722581837797</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1722581837798</updated>
+    </task>
+    <task id="LOCAL-00056" summary="feat : cicd test">
+      <option name="closed" value="true" />
+      <created>1722582717213</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1722582717213</updated>
+    </task>
+    <task id="LOCAL-00057" summary="feat : cicd test">
+      <option name="closed" value="true" />
+      <created>1724395889418</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1724395889419</updated>
+    </task>
+    <task id="LOCAL-00058" summary="fix : jobs add working-directory">
+      <option name="closed" value="true" />
+      <created>1724421381061</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1724421381061</updated>
+    </task>
+    <task id="LOCAL-00059" summary="fix : jobs add working-directory">
+      <option name="closed" value="true" />
+      <created>1724421635152</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1724421635152</updated>
+    </task>
+    <task id="LOCAL-00060" summary="fix : jobs add working-directory">
+      <option name="closed" value="true" />
+      <created>1724421925686</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1724421925686</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
+    <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="feat : github cicd" />
+    <MESSAGE value="feat : 파일 분리 테스트 및 환경 변수 공통적 관리" />
+    <MESSAGE value="feat : api gateway 책임 분리" />
+    <MESSAGE value="feat : cicd test" />
+    <MESSAGE value="fix : jobs add working-directory" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix : jobs add working-directory" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/spring_aws_lambda_init$_Users_taeyun_Desktop_spring_aws_lambda_init_build_gradle.ic" NAME="$PROJECT_DIR$/build.gradle Coverage Results" MODIFIED="1721627867808" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true" />
+  </component>
+</project>
