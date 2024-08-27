@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cbda915b-9d40-4ede-8c51-a43d1a239036" name="Changes" comment="fix : jobs add working-directory" />
+    <list default="true" id="cbda915b-9d40-4ede-8c51-a43d1a239036" name="Changes" comment="fix : jobs add working-directory">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/api-gateway-setup.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/api-gateway-setup.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

@@ -29,87 +29,20 @@ jobs:
       - name: Download OpenAPI Spec from S3
         run: aws s3 cp s3://$S3_BUCKET_NAME/$OPENAPI_FILE .
 
-      # API Gateway 생성 또는 업데이트
       - name: Create or Update API Gateway
         id: setup_api_gateway
         run: |
           API_GATEWAY_ID=$(aws apigateway get-rest-apis --query "items[?name=='${API_GATEWAY_NAME}'].id" --output text --region $AWS_REGION)
-          echo "API_GATEWAY_ID: ${API_GATEWAY_ID}"
-
           if [ -z "$API_GATEWAY_ID" ] || [ "$API_GATEWAY_ID" == "None" ]; then
-            echo "Creating new API Gateway..."
-            API_BODY=$(cat ${OPENAPI_FILE})
-            API_GATEWAY_ID=$(aws apigateway import-rest-api --body "$API_BODY" --query 'id' --output text --region $AWS_REGION)
-            echo "New API_GATEWAY_ID: ${API_GATEWAY_ID}"
+            API_GATEWAY_ID=$(aws apigateway import-rest-api --body "file://${OPENAPI_FILE}" --query 'id' --output text --region $AWS_REGION)
           else
-            echo "Updating existing API Gateway..."
-            API_BODY=$(cat ${OPENAPI_FILE})
-            aws apigateway put-rest-api --rest-api-id $API_GATEWAY_ID --mode overwrite --body "$API_BODY" --region $AWS_REGION
-            echo "Updated API_GATEWAY_ID: ${API_GATEWAY_ID}"
+            aws apigateway put-rest-api --rest-api-id $API_GATEWAY_ID --mode overwrite --body "file://${OPENAPI_FILE}" --region $AWS_REGION
           fi
 
           aws apigateway update-rest-api --rest-api-id $API_GATEWAY_ID --patch-operations op=replace,path=/name,value="${API_GATEWAY_NAME}" --region $AWS_REGION
-          echo "Final API_GATEWAY_ID: ${API_GATEWAY_ID}"
-
           echo "::set-output name=api_gateway_id::$API_GATEWAY_ID"
 
-      # API Gateway 경로 및 메서드 가져오기
-      - name: Get API Gateway Resources
-        run: |
-          API_GATEWAY_ID=${{ steps.setup_api_gateway.outputs.api_gateway_id }}
-          echo "Using API_GATEWAY_ID: ${API_GATEWAY_ID}"
-          
-          RESOURCE_IDS=$(aws apigateway get-resources --rest-api-id $API_GATEWAY_ID --query "items[].id" --output text --region $AWS_REGION)
-          echo "RESOURCE_IDS: ${RESOURCE_IDS}"
-
-          for RESOURCE_ID in $RESOURCE_IDS; do
-            echo "Processing RESOURCE_ID: ${RESOURCE_ID}"
-            RESOURCE=$(aws apigateway get-resource --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --region $AWS_REGION)
-            RESOURCE_PATH=$(echo $RESOURCE | jq -r '.path')
-            if [ "$(echo $RESOURCE | jq '.resourceMethods')" != "null" ]; then
-              METHODS=$(echo $RESOURCE | jq -r '.resourceMethods | keys | @tsv')
-              echo "METHODS raw output: ${METHODS}"
-              if [ -z "$METHODS" ] || [ "$METHODS" == "None" ] || [ "$METHODS" == "null" ]; then
-                echo "No methods found for RESOURCE_ID: ${RESOURCE_ID}"
-                continue
-              fi
-              echo "METHODS for RESOURCE_ID ${RESOURCE_ID}: ${METHODS}"
-              for METHOD in $METHODS; do
-                echo "Adding integration for METHOD: ${METHOD} on RESOURCE_ID: ${RESOURCE_ID}"
-                if [ "$METHOD" == "GET" ]; then
-                  aws apigateway put-integration --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD \
-                    --type AWS_PROXY --integration-http-method POST \
-                    --uri arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):function:${LAMBDA_FUNCTION_NAME}/invocations \
-                    --request-parameters '{"integration.request.path.username":"method.request.path.username"}' \
-                    --region $AWS_REGION
-
-                  # GET 메서드 응답 콘텐츠 유형 설정
-                  aws apigateway delete-method-response --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method GET --status-code 200 --region $AWS_REGION || true
-                  aws apigateway put-method-response --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method GET --status-code 200 \
-                    --response-models '{"application/json": "Empty"}' --region $AWS_REGION || true
-
-                elif [ "$METHOD" == "POST" ]; then
-                  aws apigateway put-integration --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD \
-                    --type AWS_PROXY --integration-http-method POST \
-                    --uri arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):function:${LAMBDA_FUNCTION_NAME}/invocations \
-                    --region $AWS_REGION
-                fi
-
-                # Lambda 권한 추가
-                aws lambda add-permission --function-name $LAMBDA_FUNCTION_NAME \
-                  --statement-id "apigateway-$(uuidgen)" \
-                  --action "lambda:InvokeFunction" \
-                  --principal apigateway.amazonaws.com \
-                  --source-arn "arn:aws:execute-api:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):${API_GATEWAY_ID}/*/${METHOD}${RESOURCE_PATH}"
-              done
-            else
-              echo "No methods found for RESOURCE_ID: ${RESOURCE_ID}"
-            fi
-          done
-
-      # 배포
       - name: Deploy API Gateway
         run: |
           API_GATEWAY_ID=${{ steps.setup_api_gateway.outputs.api_gateway_id }}
-          echo "Deploying API Gateway with ID: ${API_GATEWAY_ID}"
           aws apigateway create-deployment --rest-api-id $API_GATEWAY_ID --stage-name $STAGE_NAME --region $AWS_REGION
