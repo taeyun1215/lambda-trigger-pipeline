@@ -53,58 +53,58 @@ jobs:
 
           echo "::set-output name=api_gateway_id::$API_GATEWAY_ID"
 
-      # API Gateway 경로 및 메서드 가져오기
       - name: Get API Gateway Resources
         run: |
           API_GATEWAY_ID=${{ steps.setup_api_gateway.outputs.api_gateway_id }}
-          echo "Using API_GATEWAY_ID: ${API_GATEWAY_ID}"
-          
           RESOURCE_IDS=$(aws apigateway get-resources --rest-api-id $API_GATEWAY_ID --query "items[].id" --output text --region $AWS_REGION)
-          echo "RESOURCE_IDS: ${RESOURCE_IDS}"
-
+          
           for RESOURCE_ID in $RESOURCE_IDS; do
-            echo "Processing RESOURCE_ID: ${RESOURCE_ID}"
             RESOURCE=$(aws apigateway get-resource --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --region $AWS_REGION)
             RESOURCE_PATH=$(echo $RESOURCE | jq -r '.path')
+          
             if [ "$(echo $RESOURCE | jq '.resourceMethods')" != "null" ]; then
               METHODS=$(echo $RESOURCE | jq -r '.resourceMethods | keys | @tsv')
-              echo "METHODS raw output: ${METHODS}"
-              if [ -z "$METHODS" ] || [ "$METHODS" == "None" ] || [ "$METHODS" == "null" ]; then
-                echo "No methods found for RESOURCE_ID: ${RESOURCE_ID}"
-                continue
-              fi
-              echo "METHODS for RESOURCE_ID ${RESOURCE_ID}: ${METHODS}"
               for METHOD in $METHODS; do
-                echo "Adding integration for METHOD: ${METHOD} on RESOURCE_ID: ${RESOURCE_ID}"
-                
-                if [ "$METHOD" == "GET" ]; then
-                  # 기본적인 통합 설정
-                  INTEGRATION_PARAMS=""
-                  
-                  if [ "$(echo $RESOURCE | jq -r '.resourceMethods.GET.requestParameters["method.request.querystring.{parameter-name}"]')" != "null" ]; then
-                    INTEGRATION_PARAMS='{ "integration.request.querystring.{parameter-name}": "method.request.querystring.{parameter-name}" }'
-                  elif [ "$(echo $RESOURCE | jq -r '.resourceMethods.GET.requestParameters["method.request.path.{parameter-name}"]')" != "null" ]; then
-                    INTEGRATION_PARAMS='{ "integration.request.path.{parameter-name}": "method.request.path.{parameter-name}" }'
-                  fi
+                echo "Processing METHOD: ${METHOD} on RESOURCE_ID: ${RESOURCE_ID}"
           
+                # 쿼리 스트링 파라미터 추출
+                QUERY_PARAMS=$(echo $RESOURCE | jq -r ".resourceMethods.${METHOD}.requestParameters | to_entries | map(select(.key | startswith(\"method.request.querystring.\"))) | .[].key")
+          
+                # 경로 파라미터 추출
+                PATH_PARAMS=$(echo $RESOURCE | jq -r ".resourceMethods.${METHOD}.requestParameters | to_entries | map(select(.key | startswith(\"method.request.path.\"))) | .[].key")
+      
+                REQUEST_PARAMETERS=""
+          
+                # 쿼리 스트링 파라미터 추가
+                for QUERY_PARAM in $QUERY_PARAMS; do
+                  if [ -n "$QUERY_PARAM" ]; then
+                    REQUEST_PARAMETERS="${REQUEST_PARAMETERS}\"integration.request.querystring.${QUERY_PARAM#method.request.querystring.}\":\"${QUERY_PARAM}\","
+                  fi
+                done
+          
+                # 경로 파라미터 추가
+                for PATH_PARAM in $PATH_PARAMS; do
+                  if [ -n "$PATH_PARAM" ]; then
+                    REQUEST_PARAMETERS="${REQUEST_PARAMETERS}\"integration.request.path.${PATH_PARAM#method.request.path.}\":\"${PATH_PARAM}\","
+                  fi
+                done
+          
+                # 마지막 콤마 제거
+                REQUEST_PARAMETERS=$(echo $REQUEST_PARAMETERS | sed 's/,$//')
+          
+                if [ "$METHOD" == "GET" ] || [ "$METHOD" == "POST" ]; then
                   aws apigateway put-integration --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD \
                     --type AWS_PROXY --integration-http-method POST \
                     --uri arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):function:${LAMBDA_FUNCTION_NAME}/invocations \
-                    --request-parameters "${INTEGRATION_PARAMS}" \
+                    --request-parameters "{${REQUEST_PARAMETERS}}" \
                     --region $AWS_REGION
-
-                  # GET 메서드 응답 콘텐츠 유형 설정
-                  aws apigateway delete-method-response --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method GET --status-code 200 --region $AWS_REGION || true
-                  aws apigateway put-method-response --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method GET --status-code 200 \
+      
+                  # 메서드 응답 콘텐츠 유형 설정
+                  aws apigateway delete-method-response --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD --status-code 200 --region $AWS_REGION || true
+                  aws apigateway put-method-response --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD --status-code 200 \
                     --response-models '{"application/json": "Empty"}' --region $AWS_REGION || true
-
-                elif [ "$METHOD" == "POST" ]; then
-                  aws apigateway put-integration --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD \
-                    --type AWS_PROXY --integration-http-method POST \
-                    --uri arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):function:${LAMBDA_FUNCTION_NAME}/invocations \
-                    --region $AWS_REGION
                 fi
-
+          
                 # Lambda 권한 추가
                 aws lambda add-permission --function-name $LAMBDA_FUNCTION_NAME \
                   --statement-id "apigateway-$(uuidgen)" \
@@ -116,6 +116,7 @@ jobs:
               echo "No methods found for RESOURCE_ID: ${RESOURCE_ID}"
             fi
           done
+
 
       # 배포
       - name: Deploy API Gateway
