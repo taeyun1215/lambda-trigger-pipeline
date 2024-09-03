@@ -73,7 +73,7 @@ jobs:
                 # 경로 파라미터 추출
                 PATH_PARAMS=$(echo $RESOURCE | jq -r ".resourceMethods.${METHOD}.requestParameters | to_entries | map(select(.key | startswith(\"method.request.path.\"))) | .[].key")
       
-                REQUEST_PARAMETERS=""
+                REQUEST_PARAMETERS="{}"
           
                 # 쿼리 스트링 파라미터 추가
                 for QUERY_PARAM in $QUERY_PARAMS; do
