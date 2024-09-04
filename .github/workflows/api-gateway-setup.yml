@@ -67,30 +67,32 @@ jobs:
               for METHOD in $METHODS; do
                 echo "Processing METHOD: ${METHOD} on RESOURCE_ID: ${RESOURCE_ID}"
           
-                # 쿼리 스트링 파라미터 추출
-                QUERY_PARAMS=$(echo $RESOURCE | jq -r ".resourceMethods.${METHOD}.requestParameters | to_entries | map(select(.key | startswith(\"method.request.querystring.\"))) | .[].key")
-          
-                # 경로 파라미터 추출
-                PATH_PARAMS=$(echo $RESOURCE | jq -r ".resourceMethods.${METHOD}.requestParameters | to_entries | map(select(.key | startswith(\"method.request.path.\"))) | .[].key")
-      
                 REQUEST_PARAMETERS="{}"
           
-                # 쿼리 스트링 파라미터 추가
-                for QUERY_PARAM in $QUERY_PARAMS; do
-                  if [ -n "$QUERY_PARAM" ]; then
-                    REQUEST_PARAMETERS="${REQUEST_PARAMETERS}\"integration.request.querystring.${QUERY_PARAM#method.request.querystring.}\":\"${QUERY_PARAM}\","
-                  fi
-                done
+                if [ "$METHOD" == "GET" ]; then
+                  # 쿼리 스트링 파라미터 추출
+                  QUERY_PARAMS=$(echo $RESOURCE | jq -r ".resourceMethods.${METHOD}.requestParameters | to_entries | map(select(.key | startswith(\"method.request.querystring.\"))) | .[].key")
           
-                # 경로 파라미터 추가
-                for PATH_PARAM in $PATH_PARAMS; do
-                  if [ -n "$PATH_PARAM" ]; then
-                    REQUEST_PARAMETERS="${REQUEST_PARAMETERS}\"integration.request.path.${PATH_PARAM#method.request.path.}\":\"${PATH_PARAM}\","
-                  fi
-                done
+                  # 경로 파라미터 추출
+                  PATH_PARAMS=$(echo $RESOURCE | jq -r ".resourceMethods.${METHOD}.requestParameters | to_entries | map(select(.key | startswith(\"method.request.path.\"))) | .[].key")
           
-                # 마지막 콤마 제거
-                REQUEST_PARAMETERS=$(echo $REQUEST_PARAMETERS | sed 's/,$//')
+                  # 쿼리 스트링 파라미터 추가
+                  for QUERY_PARAM in $QUERY_PARAMS; do
+                    if [ -n "$QUERY_PARAM" ]; then
+                      REQUEST_PARAMETERS="${REQUEST_PARAMETERS}\"integration.request.querystring.${QUERY_PARAM#method.request.querystring.}\":\"${QUERY_PARAM}\","
+                    fi
+                  done
+          
+                  # 경로 파라미터 추가
+                  for PATH_PARAM in $PATH_PARAMS; do
+                    if [ -n "$PATH_PARAM" ]; then
+                      REQUEST_PARAMETERS="${REQUEST_PARAMETERS}\"integration.request.path.${PATH_PARAM#method.request.path.}\":\"${PATH_PARAM}\","
+                    fi
+                  done
+          
+                  # 마지막 콤마 제거
+                  REQUEST_PARAMETERS=$(echo $REQUEST_PARAMETERS | sed 's/,$//')
+                fi
           
                 if [ "$METHOD" == "GET" ] || [ "$METHOD" == "POST" ]; then
                   aws apigateway put-integration --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD \
@@ -98,7 +100,7 @@ jobs:
                     --uri arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):function:${LAMBDA_FUNCTION_NAME}/invocations \
                     --request-parameters "{${REQUEST_PARAMETERS}}" \
                     --region $AWS_REGION
-      
+          
                   # 메서드 응답 콘텐츠 유형 설정
                   aws apigateway delete-method-response --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD --status-code 200 --region $AWS_REGION || true
                   aws apigateway put-method-response --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD --status-code 200 \
@@ -116,7 +118,6 @@ jobs:
               echo "No methods found for RESOURCE_ID: ${RESOURCE_ID}"
             fi
           done
-
 
       # 배포
       - name: Deploy API Gateway
