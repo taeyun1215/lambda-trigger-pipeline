@@ -70,12 +70,12 @@ jobs:
                 REQUEST_PARAMETERS="{}"
           
                 if [ "$METHOD" == "GET" ]; then
-                  # 쿼리 스트링 파라미터 추출
-                  QUERY_PARAMS=$(echo $RESOURCE | jq -r ".resourceMethods.${METHOD}.requestParameters | to_entries | map(select(.key | startswith(\"method.request.querystring.\"))) | .[].key")
+                  # 쿼리 스트링 파라미터 추출 (null 체크 추가)
+                  QUERY_PARAMS=$(echo $RESOURCE | jq -r ".resourceMethods.${METHOD}.requestParameters | select(.!=null) | to_entries | map(select(.key | startswith(\"method.request.querystring.\"))) | .[].key")
           
-                  # 경로 파라미터 추출
-                  PATH_PARAMS=$(echo $RESOURCE | jq -r ".resourceMethods.${METHOD}.requestParameters | to_entries | map(select(.key | startswith(\"method.request.path.\"))) | .[].key")
-          
+                  # 경로 파라미터 추출 (null 체크 추가)
+                  PATH_PARAMS=$(echo $RESOURCE | jq -r ".resourceMethods.${METHOD}.requestParameters | select(.!=null) | to_entries | map(select(.key | startswith(\"method.request.path.\"))) | .[].key")
+
                   # 쿼리 스트링 파라미터 추가
                   for QUERY_PARAM in $QUERY_PARAMS; do
                     if [ -n "$QUERY_PARAM" ]; then
