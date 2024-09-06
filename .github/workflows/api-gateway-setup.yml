@@ -94,6 +94,10 @@ jobs:
                   REQUEST_PARAMETERS=$(echo $REQUEST_PARAMETERS | sed 's/,$//')
                 fi
           
+                if [ "$REQUEST_PARAMETERS" == "{}" ]; then
+                REQUEST_PARAMETERS="null"
+                fi
+          
                 if [ "$METHOD" == "GET" ] || [ "$METHOD" == "POST" ]; then
                   aws apigateway put-integration --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD \
                     --type AWS_PROXY --integration-http-method POST \
