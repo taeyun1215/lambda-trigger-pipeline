@@ -95,7 +95,7 @@ jobs:
                 fi
           
                 if [ "$REQUEST_PARAMETERS" == "{}" ]; then
-                REQUEST_PARAMETERS="null"
+                  REQUEST_PARAMETERS="null"
                 fi
           
                 if [ "$METHOD" == "GET" ] || [ "$METHOD" == "POST" ]; then
