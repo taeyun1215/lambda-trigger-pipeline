@@ -99,16 +99,18 @@ jobs:
                 fi
           
                 if [ "$METHOD" == "GET" ] || [ "$METHOD" == "POST" ]; then
-                  aws apigateway put-integration --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD \
-                    --type AWS_PROXY --integration-http-method POST \
-                    --uri arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):function:${LAMBDA_FUNCTION_NAME}/invocations \
-                    --request-parameters "{${REQUEST_PARAMETERS}}" \
-                    --region $AWS_REGION
-          
-                  # 메서드 응답 콘텐츠 유형 설정
-                  aws apigateway delete-method-response --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD --status-code 200 --region $AWS_REGION || true
-                  aws apigateway put-method-response --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD --status-code 200 \
-                    --response-models '{"application/json": "Empty"}' --region $AWS_REGION || true
+                  if [ "$REQUEST_PARAMETERS" != "{}" ]; then
+                    aws apigateway put-integration --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD \
+                      --type AWS_PROXY --integration-http-method POST \
+                      --uri arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):function:${LAMBDA_FUNCTION_NAME}/invocations \
+                      --request-parameters "{${REQUEST_PARAMETERS}}" \
+                      --region $AWS_REGION
+                  else
+                    aws apigateway put-integration --rest-api-id $API_GATEWAY_ID --resource-id $RESOURCE_ID --http-method $METHOD \
+                      --type AWS_PROXY --integration-http-method POST \
+                      --uri arn:aws:apigateway:${AWS_REGION}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS_REGION}:$(aws sts get-caller-identity --query "Account" --output text):function:${LAMBDA_FUNCTION_NAME}/invocations \
+                      --region $AWS_REGION
+                  fi
                 fi
           
                 # Lambda 권한 추가
